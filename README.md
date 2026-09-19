@@ -140,3 +140,54 @@
 ![Результат задачи 5](screenshots/task5.png)
 
 Скрипт: [task5.sh](task5.sh), зарегистрированная команда: [banner](banner)
+
+
+---
+
+## Задача 6. Проверка комментария в первой строке
+
+**Условие:** написать программу для проверки наличия комментария в первой строке файлов с расширением c, js и py.
+
+**Код:**
+
+    #!/bin/bash
+    # Задача 6. Проверка комментария в первой строке файлов .c, .js, .py
+
+    if [ $# -eq 0 ]; then
+        echo "Использование: $0 <каталог>"
+        exit 1
+    fi
+
+    dir="$1"
+
+    if [ ! -d "$dir" ]; then
+        echo "Ошибка: '$dir' — не каталог"
+        exit 1
+    fi
+
+    find "$dir" -type f \( -name '*.c' -o -name '*.js' -o -name '*.py' \) | while read -r file; do
+        first_line=$(head -n 1 "$file")
+
+        case "$file" in
+            *.py)
+                if [[ "$first_line" =~ ^[[:space:]]*# ]]; then
+                    echo "$file — есть комментарий"
+                else
+                    echo "$file — нет комментария"
+                fi
+                ;;
+            *.c|*.js)
+                if [[ "$first_line" =~ ^[[:space:]]*(//|/\*) ]]; then
+                    echo "$file — есть комментарий"
+                else
+                    echo "$file — нет комментария"
+                fi
+                ;;
+        esac
+    done
+
+**Результат:**
+
+![Результат задачи 6](screenshots/task6.png)
+
+Скрипт: [task6.sh](task6.sh)
