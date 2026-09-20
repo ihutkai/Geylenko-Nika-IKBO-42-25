@@ -191,3 +191,50 @@
 ![Результат задачи 6](screenshots/task6.png)
 
 Скрипт: [task6.sh](task6.sh)
+
+
+---
+
+## Задача 7. Поиск файлов-дубликатов
+
+**Условие:** написать программу для нахождения файлов-дубликатов (имеющих 1 или более копий содержимого) по заданному пути (и подкаталогам).
+
+**Код:**
+
+    #!/bin/bash
+    # Задача 7. Поиск файлов-дубликатов
+
+    if [ $# -eq 0 ]; then
+        echo "Использование: $0 <каталог>"
+        exit 1
+    fi
+
+    dir="$1"
+
+    if [ ! -d "$dir" ]; then
+        echo "Ошибка: '$dir' — не каталог"
+        exit 1
+    fi
+
+    find "$dir" -type f -exec md5sum {} \; | sort > /tmp/hashes.txt
+
+    duplicates=$(awk '{print $1}' /tmp/hashes.txt | uniq -d)
+
+    if [ -z "$duplicates" ]; then
+        echo "Дубликатов не найдено"
+        exit 0
+    fi
+
+    echo "$duplicates" | while read -r hash; do
+        echo "Дубликаты (хеш: $hash):"
+        grep "^$hash" /tmp/hashes.txt | awk '{$1=""; print "  " $0}'
+        echo ""
+    done
+
+    rm -f /tmp/hashes.txt
+
+**Результат:**
+
+![Результат задачи 7](screenshots/task7.png)
+
+Скрипт: [task7.sh](task7.sh)
