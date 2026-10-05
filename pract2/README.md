@@ -219,3 +219,40 @@
 - `dropdown` → зависит от любой версии `icons`
 
 MiniZinc нашёл одно из решений: `menu 1.0`, `dropdown 1.8`, `icons 1.0`.
+
+
+---
+
+## Задача 6. Зависимости пакетов (данные)
+
+**Условие:** решить на MiniZinc задачу о зависимостях пакетов для следующих данных (root → foo, target; foo → left, right; shared; target).
+
+**Код (task6.mzn):**
+
+    % Задача 6. Зависимости пакетов
+
+    array[1..2] of float: foo_versions    = [1.0, 1.1];
+    array[1..2] of float: target_versions = [1.0, 2.0];
+
+    var 1..2: foo;
+    var 1..2: target;
+
+    constraint foo >= 1;
+    constraint target == 2;
+    constraint foo == 1;
+
+    solve satisfy;
+
+    output [
+      "foo = " ++ show(foo_versions[foo]) ++ "\n",
+      "target = " ++ show(target_versions[target]) ++ "\n",
+      "shared = не устанавливается (конфликт)\n"
+    ];
+
+**Результат:**
+
+![Результат задачи 6](screenshots/task6_pract2.png)
+
+### Пояснение
+
+Если взять `foo 1.1.0`, он тянет `left` и `right`, которые требуют несовместимых версий `shared`. А `shared 1.0.0` требует `target 1.x.x`, что конфликтует с требованием root `target ^2.0.0`. Поэтому решатель выбрал `foo 1.0.0` — он без зависимостей.
