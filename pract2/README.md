@@ -42,3 +42,45 @@
     git clone https://github.com/matplotlib/matplotlib.git
 
 Оба способа дают исходный код пакета, который можно собрать вручную, без pip.
+
+---
+
+## Задача 2. Служебная информация о пакете express
+
+**Условие:** вывести служебную информацию о пакете express (JavaScript). Разобрать основные элементы содержимого файла со служебной информацией из пакета. Как получить пакет без менеджера пакетов, прямо из репозитория?
+
+**Команда:**
+
+    npm view express name version description license homepage repository.url
+
+**Результат:**
+
+![Результат задачи 2](screenshots/task2_pract2.png)
+
+### Разбор основных полей (package.json)
+
+| Поле | Значение | Что значит |
+|------|----------|-----------|
+| name | express | Имя пакета |
+| version | 5.2.1 | Версия (semver: MAJOR.MINOR.PATCH) |
+| description | Fast, unopinionated, minimalist web framework | Краткое описание |
+| license | MIT | Свободная лицензия |
+| homepage | https://expressjs.com/ | Сайт проекта |
+| repository.url | git+https://github.com/expressjs/express.git | Репозиторий на GitHub |
+
+### Как получить пакет без менеджера пакетов
+
+**Способ 1 — скачать tarball из npm-реестра:**
+
+    npm view express dist.tarball
+    # выведет URL, например:
+    # https://registry.npmjs.org/express/-/express-5.2.1.tgz
+
+    curl -O https://registry.npmjs.org/express/-/express-5.2.1.tgz
+    tar -xzf express-5.2.1.tgz
+
+**Способ 2 — клонировать с GitHub:**
+
+    git clone https://github.com/expressjs/express.git
+
+Оба способа дают исходный код пакета, который можно использовать без npm.
