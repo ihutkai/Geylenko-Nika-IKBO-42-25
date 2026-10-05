@@ -1,0 +1,34 @@
+digraph express_deps {
+    rankdir=LR;
+    node [shape=box, style=filled, fillcolor=lightgreen, fontname="Arial", fontsize=10];
+    edge [color=gray40];
+
+    express -> qs;
+    express -> depd;
+    express -> etag;
+    express -> once;
+    express -> send;
+    express -> vary;
+    express -> debug;
+    express -> fresh;
+    express -> cookie;
+    express -> router;
+    express -> accepts;
+    express -> type_is [label="type-is"];
+    express -> parseurl;
+    express -> statuses;
+    express -> encodeurl;
+    express -> mime_types [label="mime-types"];
+    express -> proxy_addr [label="proxy-addr"];
+    express -> body_parser [label="body-parser"];
+    express -> escape_html [label="escape-html"];
+    express -> http_errors [label="http-errors"];
+    express -> on_finished [label="on-finished"];
+    express -> content_type [label="content-type"];
+    express -> finalhandler;
+    express -> range_parser [label="range-parser"];
+    express -> serve_static [label="serve-static"];
+    express -> cookie_signature [label="cookie-signature"];
+    express -> merge_descriptors [label="merge-descriptors"];
+    express -> content_disposition [label="content-disposition"];
+}
