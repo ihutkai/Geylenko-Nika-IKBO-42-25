@@ -84,3 +84,55 @@
     git clone https://github.com/expressjs/express.git
 
 Оба способа дают исходный код пакета, который можно использовать без npm.
+
+---
+
+## Задача 3. Граф зависимостей matplotlib и express
+
+**Условие:** сформировать graphviz-код и получить изображения зависимостей matplotlib и express.
+
+### Граф зависимостей matplotlib
+
+**DOT-код:**
+
+    digraph matplotlib_deps {
+        rankdir=LR;
+        node [shape=box, style=filled, fillcolor=lightblue];
+        matplotlib -> contourpy;
+        matplotlib -> cycler;
+        matplotlib -> fonttools;
+        matplotlib -> kiwisolver;
+        matplotlib -> numpy;
+        matplotlib -> packaging;
+        matplotlib -> pillow;
+        matplotlib -> pyparsing;
+        matplotlib -> python_dateutil [label="python-dateutil"];
+    }
+
+**Генерация:**
+
+    dot -Tpng matplotlib_deps.dot -o matplotlib_deps.png
+
+**Изображение:**
+
+![matplotlib dependencies](screenshots/matplotlib_deps.png)
+
+### Граф зависимостей express
+
+**DOT-код:**
+
+    digraph express_deps {
+        rankdir=LR;
+        node [shape=box, style=filled, fillcolor=lightgreen];
+        express -> qs;
+        express -> depd;
+        ...
+    }
+
+**Генерация:**
+
+    dot -Tpng express_deps.dot -o express_deps.png
+
+**Изображение:**
+
+![express dependencies](screenshots/express_deps.png)
