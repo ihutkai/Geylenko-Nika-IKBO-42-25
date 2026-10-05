@@ -175,3 +175,47 @@
 ![Результат задачи 4](screenshots/task4_pract2.png)
 
 Билет `620431`, сумма первых трёх = сумма последних трёх = 8. Все цифры разные.
+
+
+---
+
+## Задача 5. Зависимости пакетов (menu/dropdown/icons)
+
+**Условие:** решить на MiniZinc задачу о зависимостях пакетов для рисунка.
+
+**Код (task5.mzn):**
+
+    % Задача 5. Зависимости пакетов
+
+    array[1..6] of float: menu_versions     = [1.0, 1.1, 1.2, 1.3, 1.4, 1.5];
+    array[1..5] of float: dropdown_versions = [1.8, 2.0, 2.1, 2.2, 2.3];
+    array[1..2] of float: icons_versions    = [1.0, 2.0];
+
+    var 1..6: menu;
+    var 1..5: dropdown;
+    var 1..2: icons;
+
+    constraint (menu == 2 \/ menu == 3 \/ menu == 4) -> (dropdown >= 2);
+    constraint (menu == 5 \/ menu == 6) -> (dropdown == 1);
+
+    solve satisfy;
+
+    output [
+      "menu = " ++ show(menu_versions[menu]) ++ "\n",
+      "dropdown = " ++ show(dropdown_versions[dropdown]) ++ "\n",
+      "icons = " ++ show(icons_versions[icons]) ++ "\n"
+    ];
+
+**Результат:**
+
+![Результат задачи 5](screenshots/task5_pract2.png)
+
+### Пояснение
+
+Зависимости из графа:
+- `menu 1.1.0, 1.2.0, 1.3.0` → зависят от `dropdown 2.x`
+- `menu 1.4.0, 1.5.0` → зависят от `dropdown 1.8.0`
+- `root` → зависит от любой версии `menu` и `icons`
+- `dropdown` → зависит от любой версии `icons`
+
+MiniZinc нашёл одно из решений: `menu 1.0`, `dropdown 1.8`, `icons 1.0`.
