@@ -136,3 +136,42 @@
 **Изображение:**
 
 ![express dependencies](screenshots/express_deps.png)
+
+---
+
+## Задача 4. Счастливые билеты (MiniZinc)
+
+**Условие:** решить на MiniZinc задачу о счастливых билетах. Добавить ограничение на то, что все цифры билета должны быть различными (all_different). Найти минимальное решение для суммы 3 цифр.
+
+**Код (lucky_ticket.mzn):**
+
+    include "alldifferent.mzn";
+
+    var 0..9: d1;
+    var 0..9: d2;
+    var 0..9: d3;
+    var 0..9: d4;
+    var 0..9: d5;
+    var 0..9: d6;
+
+    constraint d1 + d2 + d3 = d4 + d5 + d6;
+    constraint alldifferent([d1, d2, d3, d4, d5, d6]);
+
+    var 0..27: sum3 = d1 + d2 + d3;
+    solve minimize sum3;
+
+    output [
+        "Билет: ", show(d1), show(d2), show(d3), show(d4), show(d5), show(d6), "\n",
+        "Сумма первых трёх: ", show(sum3), "\n",
+        "Сумма последних трёх: ", show(d4 + d5 + d6), "\n"
+    ];
+
+**Команда запуска:**
+
+    minizinc lucky_ticket.mzn
+
+**Результат:**
+
+![Результат задачи 4](screenshots/task4_pract2.png)
+
+Билет `620431`, сумма первых трёх = сумма последних трёх = 8. Все цифры разные.
