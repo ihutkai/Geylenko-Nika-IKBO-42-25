@@ -256,3 +256,78 @@ MiniZinc нашёл одно из решений: `menu 1.0`, `dropdown 1.8`, `i
 ### Пояснение
 
 Если взять `foo 1.1.0`, он тянет `left` и `right`, которые требуют несовместимых версий `shared`. А `shared 1.0.0` требует `target 1.x.x`, что конфликтует с требованием root `target ^2.0.0`. Поэтому решатель выбрал `foo 1.0.0` — он без зависимостей.
+
+
+---
+
+## Задача 7. Общая форма задачи о зависимостях пакетов
+
+**Условие:** представить на MiniZinc задачу о зависимостях пакетов в общей форме, чтобы конкретный экземпляр задачи описывался только своим набором данных.
+
+**Код модели (task7.mzn):**
+
+    % packages.mzn
+
+    int: n;                       % Количество пакетов
+    set of int: PACKAGES = 1..n;
+
+    % depends[i,j] = true, если пакет i требует пакет j
+    array[PACKAGES, PACKAGES] of bool: depends;
+
+    % Пакеты, которые требуется установить
+    set of PACKAGES: requested;
+
+    % Решение: какие пакеты устанавливаются
+    array[PACKAGES] of var bool: installed;
+
+    constraint forall(i in requested)(
+        installed[i]
+    );
+
+    constraint forall(i, j in PACKAGES)(
+        (installed[i] /\ depends[i,j]) -> installed[j]
+    );
+
+    % Выбираем минимальный набор установленных пакетов
+    solve minimize sum(i in PACKAGES)(bool2int(installed[i]));
+
+    output [
+        "Установленные пакеты: ",
+        show([i | i in PACKAGES where fix(installed[i])])
+    ];
+
+**Файл данных (task7.dzn):**
+
+    n = 5;
+    requested = {1};
+
+    depends = [|
+        false, true,  true,  false, false |
+        false, false, false, true,  false |
+        false, false, false, false, false |
+        false, false, false, false, false |
+        false, false, false, false, false
+    |];
+
+**Результат:**
+
+![Результат задачи 7](screenshots/task7_pract2.png)
+
+### Пояснение
+
+Модель **отделена от данных**. В файле `.mzn` — только общая логика: объявление переменных, ограничения, решатель. В файле `.dzn` — конкретные данные: количество пакетов, матрица зависимостей, какие пакеты обязательны.
+
+Чтобы решить другую задачу о зависимостях, достаточно изменить **только `.dzn`-файл** — модель остаётся неизменной.
+
+**Основные элементы модели:**
+- `depends[i,j]` — матрица зависимостей (пакет `i` требует пакет `j`)
+- `requested` — множество обязательных пакетов
+- `installed` — булевы переменные: установлен пакет или нет
+- `constraint forall(i, j)` — если `i` установлен и зависит от `j`, то `j` тоже установлен
+- `solve minimize` — минимальный набор установленных пакетов
+
+**Запуск:**
+
+    minizinc task7.mzn task7.dzn
+
+Скрипт: [task7.mzn](minizinc/task7.mzn), данные: [task7.dzn](minizinc/task7.dzn)
