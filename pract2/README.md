@@ -147,6 +147,41 @@ output [
 
 ![Результат задачи 5](screenshots/task5_pract2.png)
 
+**Код (`minizinc/task5.mzn`):**
+
+```minizinc
+% Задача 5. Зависимости пакетов
+
+% Версии пакетов (реальные номера, не индексы)
+array[1..6] of float: menu_versions     = [1.0, 1.1, 1.2, 1.3, 1.4, 1.5];
+array[1..5] of float: dropdown_versions = [1.8, 2.0, 2.1, 2.2, 2.3];
+array[1..2] of float: icons_versions    = [1.0, 2.0];
+
+% Переменные — индексы выбранных версий
+var 1..6: menu;
+var 1..5: dropdown;
+var 1..2: icons;
+
+% Ограничения из графа зависимостей
+
+% menu 1.1.0, 1.2.0, 1.3.0 (индексы 2,3,4) зависят от dropdown 2.x (индексы 2..5)
+constraint (menu == 2 \/ menu == 3 \/ menu == 4) -> (dropdown >= 2);
+
+% menu 1.4.0, 1.5.0 (индексы 5,6) зависят от dropdown 1.8.0 (индекс 1)
+constraint (menu == 5 \/ menu == 6) -> (dropdown == 1);
+
+% root зависит от любой версии menu и icons — автоматически, дополнительных ограничений не надо
+% dropdown зависит от любой версии icons — тоже автоматически
+
+solve satisfy;
+
+output [
+  "menu = " ++ show(menu_versions[menu]) ++ "\n",
+  "dropdown = " ++ show(dropdown_versions[dropdown]) ++ "\n",
+  "icons = " ++ show(icons_versions[icons]) ++ "\n"
+];
+```
+
 Модель: [task5.mzn](minizinc/task5.mzn)
 
 ---
@@ -168,11 +203,41 @@ target 2.0.0 и 1.0.0 не имеют зависимостей.
 
 **Выполнение:**
 
-Создана модель выбора совместимых версий пакетов. Учтены прямые и транзитивные зависимости, а также ограничения диапазонов версий. Выполнен поиск набора версий, при котором требования корневого пакета согласуются с требованиями остальных выбранных пакетов.
+Проанализирована цепочка транзитивных зависимостей. Выбор `foo 1.1.0` приводит к требованию `target 1.0.0`, которое конфликтует с требованием корневого пакета `target ^2.0.0`. По результатам анализа в модели задан выбор `foo 1.0.0` и `target 2.0.0`. Пакеты `left`, `right` и `shared` для этого варианта не требуются.
 
 **Результат:**
 
 ![Результат задачи 6](screenshots/task6_pract2.png)
+
+**Код (`minizinc/task6.mzn`):**
+
+```minizinc
+% Задача 6. Зависимости пакетов
+
+array[1..2] of float: foo_versions    = [1.0, 1.1];
+array[1..2] of float: target_versions = [1.0, 2.0];
+
+var 1..2: foo;
+var 1..2: target;
+
+% root требует foo ^1.0.0 (1.x.x)
+constraint foo >= 1;
+
+% root требует target ^2.0.0 (2.x.x)
+constraint target == 2;
+
+% Если foo = 1.1.0 (индекс 2), то нужны left и right → shared 1.0.0 → target 1.0.0
+% Но target уже 2.0.0 → конфликт. Значит, foo не может быть 2.
+constraint foo == 1;
+
+solve satisfy;
+
+output [
+  "foo = " ++ show(foo_versions[foo]) ++ "\n",
+  "target = " ++ show(target_versions[target]) ++ "\n",
+  "shared = не устанавливается (конфликт)\n"
+];
+```
 
 Модель: [task6.mzn](minizinc/task6.mzn)
 
@@ -192,7 +257,56 @@ target 2.0.0 и 1.0.0 не имеют зависимостей.
 
 ![Результат задачи 7](screenshots/task7_pract2.png)
 
+**Код (`minizinc/task7.mzn`):**
+
+```minizinc
+% packages.mzn
+
+int: n;                       % Количество пакетов
+set of int: PACKAGES = 1..n;
+
+% depends[i,j] = true, если пакет i требует пакет j
+array[PACKAGES, PACKAGES] of bool: depends;
+
+% Пакеты, которые требуется установить
+set of PACKAGES: requested;
+
+% Решение: какие пакеты устанавливаются
+array[PACKAGES] of var bool: installed;
+
+constraint forall(i in requested)(
+    installed[i]
+);
+
+constraint forall(i, j in PACKAGES)(
+    (installed[i] /\ depends[i,j]) -> installed[j]
+);
+
+% Выбираем минимальный набор установленных пакетов
+solve minimize sum(i in PACKAGES)(bool2int(installed[i]));
+
+output [
+    "Установленные пакеты: ",
+    show([i | i in PACKAGES where fix(installed[i])])
+];
+```
+
 Модель: [task7.mzn](minizinc/task7.mzn)
+
+**Данные (`minizinc/task7.dzn`):**
+
+```minizinc
+n = 5;
+requested = {1};
+
+depends = [|
+    false, true,  true,  false, false |
+    false, false, false, true,  false |
+    false, false, false, false, false |
+    false, false, false, false, false |
+    false, false, false, false, false
+|];
+```
 
 Данные: [task7.dzn](minizinc/task7.dzn)
 
