@@ -10,7 +10,7 @@ import tomllib
 class Settings:
     """Итоговые пути после применения приоритетов."""
 
-    vfs_path: str = "demo-vfs"
+    vfs_path: str = "examples/vfs.json"
     startup_script: str | None = None
     config_path: str | None = None
 
@@ -36,7 +36,7 @@ def load_settings(argv=None) -> Settings:
                 parser.error(f"Параметр {key} должен быть непустой строкой")
     return Settings(
         vfs_path=args.vfs if args.vfs is not None
-        else data.get("vfs_path", "demo-vfs"),
+        else data.get("vfs_path", "examples/vfs.json"),
         startup_script=args.startup if args.startup is not None
         else data.get("startup_script"),
         config_path=args.config,

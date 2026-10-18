@@ -16,7 +16,7 @@ class ConfigurationTests(unittest.TestCase):
     """Проверить конфигурацию и выполнение скриптов без GUI."""
 
     def test_defaults(self):
-        self.assertEqual(load_settings([]).vfs_path, "demo-vfs")
+        self.assertEqual(load_settings([]).vfs_path, "examples/vfs.json")
 
     def test_file_and_cli_priority(self):
         with tempfile.TemporaryDirectory() as folder:

@@ -1,4 +1,4 @@
-"""Графический интерфейс эмулятора UNIX-оболочки, этап 1."""
+"""Графический интерфейс эмулятора UNIX-оболочки, этапы 1–3."""
 
 import tkinter as tk
 from tkinter import scrolledtext
@@ -7,6 +7,7 @@ from pathlib import Path
 from config import load_settings
 from shell import execute
 from startup import run_startup
+from vfs import VFSError, load_vfs
 
 
 class ShellWindow:
@@ -28,7 +29,7 @@ class ShellWindow:
         self.entry.pack(side="left", fill="x", expand=True)
         self.entry.bind("<Return>", self.submit)
         self.entry.focus_set()
-        self.write("Этап 2. Команды: ls [путь], cd [путь], exit.")
+        self.write("Этап 3. Команды: ls [путь], cd [путь], exit.")
 
     def write(self, text: str) -> None:
         """Добавить текст в защищённую от редактирования историю."""
@@ -58,6 +59,22 @@ def main() -> None:
         message = f"Настройка {name} = {value!r}"
         print(message)
         window.write(message)
+    try:
+        window.vfs = load_vfs(settings.vfs_path)
+    except VFSError as error:
+        window.entry.configure(state="disabled")
+        window.write(str(error))
+        window.write("Исправьте путь или формат JSON и перезапустите эмулятор.")
+        root.mainloop()
+        return
+    window.write(
+        f"VFS загружена в память: каталогов {len(window.vfs.directories)}, "
+        f"файлов {len(window.vfs.files)}."
+    )
+    for path in sorted(window.vfs.directories):
+        window.write(f"  Каталог: {path}")
+    for path, content in sorted(window.vfs.files.items()):
+        window.write(f"  Файл: {path} ({len(content)} байт)")
     if settings.startup_script:
         def start_script():
             if run_startup(settings.startup_script, window.write):

@@ -1,0 +1,6 @@
+{
+  "type": "directory",
+  "children": {
+    "broken.bin": {"type": "file", "encoding": "base64", "content": "???"}
+  }
+}
