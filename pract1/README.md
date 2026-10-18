@@ -34,7 +34,7 @@ pip show matplotlib | grep -E '^(Name|Version|Summary|Home-page|Author|License|L
 
 **Результат:**
 
-![Результат задачи 1](screenshots/task1_pract2.png)
+![Результат задачи 1](screenshots/task1_pract1.png)
 
 ---
 
