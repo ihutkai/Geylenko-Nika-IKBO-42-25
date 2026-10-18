@@ -2,8 +2,11 @@
 
 import tkinter as tk
 from tkinter import scrolledtext
+from pathlib import Path
 
+from config import load_settings
 from shell import execute
+from startup import run_startup
 
 
 class ShellWindow:
@@ -25,7 +28,7 @@ class ShellWindow:
         self.entry.pack(side="left", fill="x", expand=True)
         self.entry.bind("<Return>", self.submit)
         self.entry.focus_set()
-        self.write("Этап 1. Команды: ls [путь], cd [путь], exit.")
+        self.write("Этап 2. Команды: ls [путь], cd [путь], exit.")
 
     def write(self, text: str) -> None:
         """Добавить текст в защищённую от редактирования историю."""
@@ -48,8 +51,18 @@ class ShellWindow:
 
 def main() -> None:
     """Создать окно и запустить цикл событий Tkinter."""
+    settings = load_settings()
     root = tk.Tk()
-    ShellWindow(root)
+    window = ShellWindow(root, Path(settings.vfs_path).name)
+    for name, value in vars(settings).items():
+        message = f"Настройка {name} = {value!r}"
+        print(message)
+        window.write(message)
+    if settings.startup_script:
+        def start_script():
+            if run_startup(settings.startup_script, window.write):
+                root.destroy()
+        root.after(100, start_script)
     root.mainloop()
 
 
