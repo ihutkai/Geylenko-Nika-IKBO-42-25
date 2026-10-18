@@ -1,0 +1,16 @@
+{
+  "type": "directory",
+  "children": {
+    "hello.txt": {
+      "type": "file",
+      "encoding": "utf-8",
+      "content": "Привет из виртуальной файловой системы!\n"
+    },
+    "data.bin": {
+      "type": "file",
+      "encoding": "base64",
+      "content": "AAECA/8="
+    },
+    "home": {"type": "directory", "children": {}}
+  }
+}

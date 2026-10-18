@@ -1,0 +1,34 @@
+{
+  "type": "directory",
+  "children": {
+    "home": {
+      "type": "directory",
+      "children": {
+        "user": {
+          "type": "directory",
+          "children": {
+            "docs": {
+              "type": "directory",
+              "children": {
+                "notes.txt": {
+                  "type": "file",
+                  "encoding": "utf-8",
+                  "content": "Файл на четвёртом уровне.\n"
+                }
+              }
+            },
+            "readme.txt": {
+              "type": "file", "encoding": "utf-8", "content": "Уровень 3"
+            }
+          }
+        },
+        "welcome.txt": {
+          "type": "file", "encoding": "utf-8", "content": "Уровень 2"
+        }
+      }
+    },
+    "root.txt": {
+      "type": "file", "encoding": "utf-8", "content": "Уровень 1"
+    }
+  }
+}

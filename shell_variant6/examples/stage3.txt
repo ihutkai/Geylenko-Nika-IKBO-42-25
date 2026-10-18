@@ -1,0 +1,15 @@
+# VFS загружена и показана в окне перед исполнением скрипта.
+# ls и cd остаются заглушками согласно границе этапа 3.
+ls
+ls /
+ls /home/user/docs
+cd
+cd /
+cd /home/user/docs
+cd /missing
+  ls   /home
+ls a b
+cd a b
+unknown
+exit argument
+# Для выхода вручную введите exit. Автовыход: examples/exit.txt.
