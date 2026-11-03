@@ -63,7 +63,8 @@ class ConfigTests(unittest.TestCase):
 
     def test_cli(self):
         process = subprocess.run([sys.executable, str(ROOT / "src/main.py"),
-                                  "--config", str(ROOT / "config.json")],
+                                  "--config", str(ROOT / "config.json"),
+                                  "--stage", "1"],
                                  capture_output=True, text=True)
         self.assertEqual(process.returncode, 0)
         self.assertIn("package = express", process.stdout)
